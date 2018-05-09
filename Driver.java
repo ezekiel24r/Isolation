@@ -68,17 +68,7 @@ public class Driver {
                 break;
             }
         }
-
-        /*
-        b.moveX(0,5);
-        System.out.println();
-        b.printBoard();
-        System.out.println();
-        b.moveO(7,2);
-
-        System.out.println();
-        b.printBoard();
-        System.out.println();*/
+        
     }
 
     public static int [] parseInput(String in){
