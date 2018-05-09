@@ -17,6 +17,14 @@ public class Driver {
         int col;
         int move[];
         while(true){
+            if(b.xPossibleMoves() == 0){
+                System.out.println("O has won!");
+                break;
+            }
+            if(b.oPossibleMoves() == 0){
+                System.out.println("X has won!");
+                break;
+            }
             System.out.println("X has " + b.xPossibleMoves() + " moves available");
             System.out.println("Enter a move for X");
 
@@ -34,6 +42,9 @@ public class Driver {
             b = temp;
             b.printBoard();
 
+
+
+            //move for O
             if(b.oPossibleMoves() == 0){
                 System.out.println("X has won!");
                 break;
@@ -42,7 +53,6 @@ public class Driver {
                 System.out.println("O has won!");
                 break;
             }
-
             System.out.println("O has " + b.oPossibleMoves() + " moves available");
             System.out.println("Enter a move for O");
             move = parseInput(scan.nextLine());
@@ -59,16 +69,8 @@ public class Driver {
             b = temp;
             b.printBoard();
 
-            if(b.oPossibleMoves() == 0){
-                System.out.println("X has won!");
-                break;
-            }
-            if(b.xPossibleMoves() == 0){
-                System.out.println("O has won!");
-                break;
-            }
         }
-        
+
     }
 
     public static int [] parseInput(String in){
