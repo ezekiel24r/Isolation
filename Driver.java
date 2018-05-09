@@ -67,7 +67,13 @@ public class Driver {
         else{
             result[0] = -1;
         }
-        result[1] = Character.getNumericValue(in.charAt(1)) - 1;
+        if(Character.isDigit(in.charAt(1))){
+            result[1] = Character.getNumericValue(in.charAt(1)) - 1;
+        }
+        else{
+            result[1] = -1;
+        }
+
         return result;
     }
 }

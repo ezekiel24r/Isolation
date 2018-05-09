@@ -59,7 +59,7 @@ public class BoardNode {
             xColPos = col;
             return true;
         }
-        System.out.println("Illegal move!");
+        //System.out.println("Illegal move!");
         return false;
     }
 
