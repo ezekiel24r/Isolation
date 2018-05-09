@@ -422,6 +422,38 @@ public class BoardNode {
         return sum;
     }
 
+    public ArrayList xListPossibleMoves(){
+        ArrayList<String> moves= new ArrayList<>();
+        StringBuilder str;
+        for(int i=0; i<8; i++){
+            for(int j=0; j<8; j++){
+                if(xLegalMove(i,j)){
+                    str = new StringBuilder("");
+                    str.append(i);
+                    str.append(j);
+                    moves.add(str.toString());
+                }
+            }
+        }
+        return moves;
+    }
+
+    public ArrayList oListPossibleMoves(){
+        ArrayList<String> moves= new ArrayList<>();
+        StringBuilder str;
+        for(int i=0; i<8; i++){
+            for(int j=0; j<8; j++){
+                if(oLegalMove(i,j)){
+                    str = new StringBuilder("");
+                    str.append(i);
+                    str.append(j);
+                    moves.add(str.toString()); 
+                }
+            }
+        }
+        return moves;
+    }
+
     public void printBoard(){
         System.out.print("\n  ");
         for(int i=0; i<8; i++){
