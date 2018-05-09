@@ -398,6 +398,30 @@ public class BoardNode {
         return false;
     }
 
+    public int xPossibleMoves(){
+        int sum = 0;
+        for(int i=0; i<8; i++){
+            for(int j=0; j<8; j++){
+                if(xLegalMove(i,j)){
+                    sum++;
+                }
+            }
+        }
+        return sum;
+    }
+
+    public int oPossibleMoves(){
+        int sum = 0;
+        for(int i=0; i<8; i++){
+            for(int j=0; j<8; j++){
+                if(oLegalMove(i,j)){
+                    sum++;
+                }
+            }
+        }
+        return sum;
+    }
+
     public void printBoard(){
         System.out.print("\n  ");
         for(int i=0; i<8; i++){
