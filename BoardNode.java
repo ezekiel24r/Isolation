@@ -422,7 +422,7 @@ public class BoardNode {
         return sum;
     }
 
-    public ArrayList xListPossibleMoves(){
+    public ArrayList<String> xListPossibleMoves(){
         ArrayList<String> moves= new ArrayList<>();
         StringBuilder str;
         for(int i=0; i<8; i++){
@@ -438,7 +438,7 @@ public class BoardNode {
         return moves;
     }
 
-    public ArrayList oListPossibleMoves(){
+    public ArrayList<String> oListPossibleMoves(){
         ArrayList<String> moves= new ArrayList<>();
         StringBuilder str;
         for(int i=0; i<8; i++){
@@ -447,7 +447,7 @@ public class BoardNode {
                     str = new StringBuilder("");
                     str.append(i);
                     str.append(j);
-                    moves.add(str.toString()); 
+                    moves.add(str.toString());
                 }
             }
         }
