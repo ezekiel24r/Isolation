@@ -3,7 +3,6 @@ import java.util.Scanner;
 public class Driver {
     public static void main(String [] args){
         //test
-        System.out.println("hi");
 
         Scanner scan = new Scanner(System.in);
 
@@ -29,6 +28,7 @@ public class Driver {
             System.out.println("Enter a move for X");
 
             move = parseInput(scan.nextLine());
+            //move = AlphaBeta.run(b, 'X', 0, 0, true);
             temp = new BoardNode(b);
             while(!temp.moveX(move[0], move[1])){
                 b.printBoard();
@@ -55,7 +55,10 @@ public class Driver {
             }
             System.out.println("O has " + b.oPossibleMoves() + " moves available");
             System.out.println("Enter a move for O");
-            move = parseInput(scan.nextLine());
+            //move = parseInput(scan.nextLine());
+            move = AlphaBeta.run(b, 'Y', 0, 0, false);
+
+
             temp = new BoardNode(b);
             while(!temp.moveO(move[0], move[1])){
                 b.printBoard();
@@ -69,9 +72,13 @@ public class Driver {
             b = temp;
             b.printBoard();
 
+            //ai move
+
+
         }
 
     }
+
 
     public static int [] parseInput(String in){
         int [] result = new int[2];

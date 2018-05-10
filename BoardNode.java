@@ -1,12 +1,17 @@
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class BoardNode {
+public class BoardNode implements Comparable<BoardNode>{
     public ArrayList<String> board;
     int xRowPos;
     int xColPos;
     int oRowPos;
     int oColPos;
+    int depth;
+    int alpha;
+    int beta;
+    int score;
     public BoardNode child;
 
     BoardNode(){
@@ -25,6 +30,8 @@ public class BoardNode {
         oRowPos = 7;
         oColPos = 7;
 
+        depth = 0;
+
         child = null;
 
     }
@@ -40,7 +47,11 @@ public class BoardNode {
         oRowPos = parent.oRowPos;
         oColPos = parent.oColPos;
 
-        child = null;
+        depth = parent.depth+1;
+
+        score = xPossibleMoves();
+
+        parent.child = this;
     }
 
     public boolean moveX(int row, int col){
@@ -57,6 +68,7 @@ public class BoardNode {
 
             xRowPos = row;
             xColPos = col;
+            score = xPossibleMoves();
             return true;
         }
         //System.out.println("Illegal move!");
@@ -77,6 +89,8 @@ public class BoardNode {
 
             oRowPos = row;
             oColPos = col;
+            score = xPossibleMoves();
+
 
             return true;
         }
@@ -454,6 +468,38 @@ public class BoardNode {
         return moves;
     }
 
+    public ArrayList<BoardNode> xCreateChildren(){
+        ArrayList<String> moves = this.xListPossibleMoves();
+        ArrayList<BoardNode> results = new ArrayList<>();
+        BoardNode temp;
+        int row, col;
+        for(int i=0; i<moves.size(); i++){
+            row = Character.getNumericValue(moves.get(i).charAt(0));
+            col = Character.getNumericValue(moves.get(i).charAt(1));
+
+            temp = new BoardNode(this);
+            temp.moveX(row, col);
+            results.add(temp);
+        }
+        return results;
+    }
+
+    public ArrayList<BoardNode> oCreateChildren(){
+        ArrayList<String> moves = this.oListPossibleMoves();
+        ArrayList<BoardNode> results = new ArrayList<>();
+        BoardNode temp;
+        int row, col;
+        for(int i=0; i<moves.size(); i++){
+            row = Character.getNumericValue(moves.get(i).charAt(0));
+            col = Character.getNumericValue(moves.get(i).charAt(1));
+
+            temp = new BoardNode(this);
+            temp.moveO(row, col);
+            results.add(temp);
+        }
+        return results;
+    }
+
     public void printBoard(){
         System.out.print("\n  ");
         for(int i=0; i<8; i++){
@@ -468,5 +514,18 @@ public class BoardNode {
             System.out.println();
         }
         System.out.println();
+    }
+
+    @Override
+    public int compareTo(BoardNode right) {
+        if(this.score < right.score){
+            return 1;
+        }
+        else if(this.score == right.score){
+            return ThreadLocalRandom.current().nextInt(0,2);
+        }
+        else{
+            return -1;
+        }
     }
 }
