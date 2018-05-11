@@ -27,8 +27,8 @@ public class Driver {
             System.out.println("X has " + b.xPossibleMoves() + " moves available");
             System.out.println("Enter a move for X");
 
-            move = parseInput(scan.nextLine());
-            //move = AlphaBeta.run(b, 'X', 0, 0, true);
+            //move = parseInput(scan.nextLine());
+            move = AlphaBeta.getBestMove(b);
             temp = new BoardNode(b);
             while(!temp.moveX(move[0], move[1])){
                 b.printBoard();
@@ -55,8 +55,8 @@ public class Driver {
             }
             System.out.println("O has " + b.oPossibleMoves() + " moves available");
             System.out.println("Enter a move for O");
-            //move = parseInput(scan.nextLine());
-            move = AlphaBeta.run(b, 'Y', 0, 0, false);
+            move = parseInput(scan.nextLine());
+            //move = AlphaBeta.run(b, 'Y', 0, 0, false);
 
 
             temp = new BoardNode(b);

@@ -12,7 +12,10 @@ public class BoardNode implements Comparable<BoardNode>{
     int alpha;
     int beta;
     int score;
-    public BoardNode child;
+
+    char player;
+
+    public ArrayList<BoardNode> children;
 
     BoardNode(){
         board = new ArrayList<String>(8);
@@ -32,7 +35,11 @@ public class BoardNode implements Comparable<BoardNode>{
 
         depth = 0;
 
-        child = null;
+        player = 'X';
+
+        children = new ArrayList<>();
+
+
 
     }
 
@@ -41,6 +48,8 @@ public class BoardNode implements Comparable<BoardNode>{
         for(int i = 0; i<8; i++){
             this.board.add(parent.board.get(i));
         }
+
+
 
         xRowPos = parent.xRowPos;
         xColPos = parent.xColPos;
@@ -51,7 +60,16 @@ public class BoardNode implements Comparable<BoardNode>{
 
         score = xPossibleMoves();
 
-        parent.child = this;
+        children = new ArrayList<>();
+
+        parent.children.add(this);
+
+        if(parent.player == 'X'){
+            this.player = 'O';
+        }
+        else{
+            this.player = 'X';
+        }
     }
 
     public boolean moveX(int row, int col){
@@ -69,6 +87,7 @@ public class BoardNode implements Comparable<BoardNode>{
             xRowPos = row;
             xColPos = col;
             score = xPossibleMoves();
+            player = 'O';
             return true;
         }
         //System.out.println("Illegal move!");
@@ -90,6 +109,8 @@ public class BoardNode implements Comparable<BoardNode>{
             oRowPos = row;
             oColPos = col;
             score = xPossibleMoves();
+            player = 'X';
+
 
 
             return true;
@@ -412,6 +433,15 @@ public class BoardNode implements Comparable<BoardNode>{
         return false;
     }
 
+    public int possibleMoves(){
+        if(player == 'X'){
+            return xPossibleMoves();
+        }
+        else{
+            return oPossibleMoves();
+        }
+    }
+
     public int xPossibleMoves(){
         int sum = 0;
         for(int i=0; i<8; i++){
@@ -468,6 +498,15 @@ public class BoardNode implements Comparable<BoardNode>{
         return moves;
     }
 
+    public ArrayList<BoardNode> createChildren(){
+        if(player == 'X'){
+            return xCreateChildren();
+        }
+        else{
+            return oCreateChildren();
+        }
+    }
+
     public ArrayList<BoardNode> xCreateChildren(){
         ArrayList<String> moves = this.xListPossibleMoves();
         ArrayList<BoardNode> results = new ArrayList<>();
@@ -479,6 +518,7 @@ public class BoardNode implements Comparable<BoardNode>{
 
             temp = new BoardNode(this);
             temp.moveX(row, col);
+            this.children.add(temp);
             results.add(temp);
         }
         return results;
@@ -495,6 +535,7 @@ public class BoardNode implements Comparable<BoardNode>{
 
             temp = new BoardNode(this);
             temp.moveO(row, col);
+            this.children.add(temp);
             results.add(temp);
         }
         return results;
@@ -522,7 +563,7 @@ public class BoardNode implements Comparable<BoardNode>{
             return 1;
         }
         else if(this.score == right.score){
-            return ThreadLocalRandom.current().nextInt(0,2);
+            return 0;
         }
         else{
             return -1;
