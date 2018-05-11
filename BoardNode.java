@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.xml.xpath.XPath;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -58,7 +59,7 @@ public class BoardNode implements Comparable<BoardNode>{
 
         depth = parent.depth+1;
 
-        score = xPossibleMoves();
+        //score = xPossibleMoves()- oPossibleMoves();
 
         children = new ArrayList<>();
 
@@ -71,6 +72,31 @@ public class BoardNode implements Comparable<BoardNode>{
             this.player = 'X';
         }
     }
+
+    BoardNode(BoardNode parent, int signal){
+        board = new ArrayList<String>(8);
+        for(int i = 0; i<8; i++){
+            this.board.add(parent.board.get(i));
+        }
+
+
+
+        xRowPos = parent.xRowPos;
+        xColPos = parent.xColPos;
+        oRowPos = parent.oRowPos;
+        oColPos = parent.oColPos;
+
+        depth = 0;
+
+        //score = xPossibleMoves()- oPossibleMoves();
+
+        children = new ArrayList<>();
+
+        player = parent.player;
+
+    }
+
+
 
     public boolean moveX(int row, int col){
         if (xLegalMove(row, col)) {
@@ -86,7 +112,8 @@ public class BoardNode implements Comparable<BoardNode>{
 
             xRowPos = row;
             xColPos = col;
-            score = xPossibleMoves();
+            //score = xPossibleMoves() - oPossibleMoves();
+            updateScore();
             player = 'O';
             return true;
         }
@@ -108,7 +135,8 @@ public class BoardNode implements Comparable<BoardNode>{
 
             oRowPos = row;
             oColPos = col;
-            score = xPossibleMoves();
+            //score = xPossibleMoves() - oPossibleMoves();
+            updateScore();
             player = 'X';
 
 
@@ -498,6 +526,154 @@ public class BoardNode implements Comparable<BoardNode>{
         return moves;
     }
 
+    public int xDirections(){
+        int sum = 0;
+        int degree = 2;
+        char temp;
+        //check left
+        if(xColPos > 0){
+            temp = board.get(xRowPos).charAt(xColPos-1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check right
+        if(xColPos < 7){
+            temp = board.get(xRowPos).charAt(xColPos+1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check up
+        if(xRowPos > 0){
+            temp = board.get(xRowPos-1).charAt(xColPos);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check down
+        if(xRowPos < 7){
+            temp = board.get(xRowPos+1).charAt(xColPos);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check up right
+        if(xRowPos > 0 && xColPos < 7){
+            temp = board.get(xRowPos-1).charAt(xColPos+1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check down right
+        if(xRowPos < 7 && xColPos < 7){
+            temp = board.get(xRowPos+1).charAt(xColPos+1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check down left
+        if(xRowPos < 7 && xColPos > 0){
+            temp = board.get(xRowPos+1).charAt(xColPos-1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check up left
+        if(xRowPos > 0 && xColPos > 0){
+            temp = board.get(xRowPos-1).charAt(xColPos-1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        return sum;
+    }
+
+    public int oDirections(){
+        int sum = 0;
+        int degree = 2;
+        char temp;
+        //check left
+        if(oColPos > 0){
+            temp = board.get(oRowPos).charAt(oColPos-1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check right
+        if(oColPos < 7){
+            temp = board.get(oRowPos).charAt(oColPos+1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check up
+        if(oRowPos > 0){
+            temp = board.get(oRowPos-1).charAt(oColPos);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check down
+        if(oRowPos < 7){
+            temp = board.get(oRowPos+1).charAt(oColPos);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check up right
+        if(oRowPos > 0 && oColPos < 7){
+            temp = board.get(oRowPos-1).charAt(oColPos+1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check down right
+        if(oRowPos < 7 && oColPos < 7){
+            temp = board.get(oRowPos+1).charAt(oColPos+1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check down left
+        if(oRowPos < 7 && oColPos > 0){
+            temp = board.get(oRowPos+1).charAt(oColPos-1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        //check up left
+        if(oRowPos > 0 && oColPos > 0){
+            temp = board.get(oRowPos-1).charAt(oColPos-1);
+            if(temp == '-'){
+                sum+=degree;
+            }
+        }
+        return sum;
+    }
+
+
+
+    public void updateScore(){
+        double h1, h2, h3, h4;
+        h1 = 1.0;
+        h2 = 1.0;
+        h3 = 0;
+        if(player == 'X') {
+
+            score = ((int) (xPossibleMoves() * h1) - ((int) (oPossibleMoves() * h2))) + (int) (xDirections() * (h3)) + depth;
+        }
+        else{
+            score = ((int) (xPossibleMoves() * h1) - ((int) (oPossibleMoves() * h2))) + (int) (xDirections() * (h3)) - depth;
+
+        }
+
+    }
+
+
+
+
+
     public ArrayList<BoardNode> createChildren(){
         if(player == 'X'){
             return xCreateChildren();
@@ -518,7 +694,7 @@ public class BoardNode implements Comparable<BoardNode>{
 
             temp = new BoardNode(this);
             temp.moveX(row, col);
-            this.children.add(temp);
+            //this.children.add(temp);
             results.add(temp);
         }
         return results;
@@ -546,7 +722,7 @@ public class BoardNode implements Comparable<BoardNode>{
         for(int i=0; i<8; i++){
             System.out.print(i+1 + " ");
         }
-        System.out.println();
+        System.out.print( "Computer vs. Opponent\n");
         for(int i=0; i<8; i++){
             System.out.print((char)(i+65) + " ");
             for(int j=0; j<8; j++){
