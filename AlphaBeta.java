@@ -52,12 +52,12 @@ public class AlphaBeta {
         int [] result = new int[2];
         long time = System.nanoTime();
         int initialDepth=3;
-        while(((System.nanoTime() - time)) < 18000000000.0) {
+        while(((System.nanoTime() - time)) < 5000000000.0) {
             temp.children = new ArrayList<>();
             alphaBeta(temp, initialDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true, time);
 
-            //System.out.println("max depth = " + initialDepth);
-            if((((System.nanoTime() - time)) > 18000000000.0)){
+            System.out.println("max depth = " + initialDepth);
+            if((((System.nanoTime() - time)) > 5000000000.0)){
                 break;
             }
             best = temp;
@@ -89,12 +89,18 @@ public class AlphaBeta {
         if (node.oPossibleMoves() == 0) {
             return Integer.MAX_VALUE-10;
         }
+        if (node.xTotalSpace() > node.oTotalSpace()){
+            return Integer.MAX_VALUE-100;
+        }
+        if (node.xTotalSpace() < node.oTotalSpace()){
+            return Integer.MIN_VALUE+100;
+        }
 
 
         if(maximizingPlayer){
             val = Integer.MIN_VALUE;
             moves = node.createChildren();
-            Collections.sort(moves);
+            //Collections.sort(moves);
 
             for(int i=0; i<moves.size(); i++){
                 val = Math.max(val, alphaBeta(moves.get(i), depth-1, alpha, beta, false, startTime));
@@ -103,7 +109,7 @@ public class AlphaBeta {
                 if (beta <= alpha) {
                     break;
                 }
-                if (System.nanoTime() - startTime > 19000000000.0){
+                if (System.nanoTime() - startTime > 6000000000.0){
                     break;
                 }
             }
@@ -112,7 +118,7 @@ public class AlphaBeta {
         else{
             val = Integer.MAX_VALUE;
             moves = node.createChildren();
-            Collections.sort(moves);
+            //Collections.sort(moves);
 
             for(int i=0; i<moves.size(); i++){
                 val = Math.min(val, alphaBeta(moves.get(i), depth-1, alpha, beta, true, startTime));
@@ -121,7 +127,7 @@ public class AlphaBeta {
                 if (beta <= alpha) {
                     break;
                 }
-                if (System.nanoTime() - startTime > 19000000000.0){
+                if (System.nanoTime() - startTime > 6000000000.0){
                     break;
                 }
             }

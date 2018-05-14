@@ -1,9 +1,4 @@
-import org.omg.CORBA.MARSHAL;
-
-import javax.swing.*;
-import javax.xml.xpath.XPath;
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class BoardNode implements Comparable<BoardNode>{
     public ArrayList<String> board;
@@ -15,6 +10,7 @@ public class BoardNode implements Comparable<BoardNode>{
     int alpha;
     int beta;
     int score;
+    int totalMoves;
 
     char player;
 
@@ -660,14 +656,24 @@ public class BoardNode implements Comparable<BoardNode>{
         double h1, h2, h3, h4;
         h1 = 1.0;
         h2 = 1.0;
-        h3 = 0;
+        h3 = 1.0;
+        h4 = 0.0;
+
+        int xMoves = xPossibleMoves();
+        int oMoves = oPossibleMoves();
+
+        int xSpace = totalSpace(new BoardNode(this, 0),xRowPos, xColPos, 0);
+        int oSpace = totalSpace(new BoardNode(this, 0),oRowPos, oColPos, 0);
+
+
+
+
         if(player == 'X') {
 
-            score = ((int) (xPossibleMoves() * h1) - ((int) (oPossibleMoves() * h2))) + (int) (xDirections() * (h3)) + depth;
+            score = xMoves-oMoves /*+ (int)(xDirections()-oDirections()*h3)*/ + (xSpace - oSpace) + depth;
         }
         else{
-            score = ((int) (xPossibleMoves() * h1) - ((int) (oPossibleMoves() * h2))) + (int) (xDirections() * (h3)) - depth;
-
+            score = xMoves-oMoves /*+ (int)(xDirections()-oDirections()*h3)*/ + (xSpace - oSpace) - depth;
         }
 
     }
@@ -718,6 +724,123 @@ public class BoardNode implements Comparable<BoardNode>{
         }
         return results;
     }
+
+    //objective: return the total number of traversable spaces in the area
+
+    public int xTotalSpace(){
+        return totalSpace(new BoardNode(this, 0), xRowPos, xColPos, 0);
+    }
+
+    public int oTotalSpace(){
+        return totalSpace(new BoardNode(this, 0), oRowPos, oColPos, 0);
+    }
+
+    public int totalSpace(BoardNode in, int row, int col, int sum){
+        //BoardNode temp = new BoardNode(this, 0);
+        char temp;
+        StringBuilder str;
+        //check left
+        if(col > 0){
+            temp = in.board.get(row).charAt(col-1);
+            if(temp == '-'){
+                //add + to position to show checked
+                str = new StringBuilder(in.board.get(row));
+                str.replace(col-1,col, "+");
+                in.board.set(row, str.toString());
+                sum+=1;
+                sum = totalSpace(in, row, col-1, sum);
+            }
+        }
+        //check right
+        if(col < 7){
+            temp = in.board.get(row).charAt(col+1);
+            if(temp == '-'){
+                //add + to position to show checked
+                str = new StringBuilder(in.board.get(row));
+                str.replace(col+1,col+2, "+");
+                in.board.set(row, str.toString());
+                sum+=1;
+                sum = totalSpace(in, row, col+1, sum);
+            }
+        }
+        //check up
+        if(row > 0){
+            temp = in.board.get(row-1).charAt(col);
+            if(temp == '-'){
+                //add + to position to show checked
+                str = new StringBuilder(in.board.get(row-1));
+                str.replace(col,col+1, "+");
+                in.board.set(row-1, str.toString());
+                sum+=1;
+                sum = totalSpace(in, row-1, col, sum);
+            }
+        }
+        //check down
+        if(row < 7){
+            temp = in.board.get(row+1).charAt(col);
+            if(temp == '-'){
+                //add + to position to show checked
+                str = new StringBuilder(in.board.get(row+1));
+                str.replace(col,col+1, "+");
+                in.board.set(row+1, str.toString());
+                sum+=1;
+                sum = totalSpace(in, row+1, col, sum);
+            }
+        }
+        //check up right
+        if(row > 0 && col < 7){
+            temp = in.board.get(row-1).charAt(col+1);
+            if(temp == '-'){
+                //add + to position to show checked
+                str = new StringBuilder(in.board.get(row-1));
+                str.replace(col+1,col+2, "+");
+                in.board.set(row-1, str.toString());
+                sum+=1;
+                sum = totalSpace(in, row-1, col+1, sum);
+            }
+        }
+        //check down right
+        if(row < 7 && col < 7){
+            temp = in.board.get(row+1).charAt(col+1);
+            if(temp == '-'){
+                //add + to position to show checked
+                str = new StringBuilder(in.board.get(row+1));
+                str.replace(col+1,col+2, "+");
+                in.board.set(row+1, str.toString());
+                sum+=1;
+                sum = totalSpace(in, row+1, col+1, sum);
+            }
+        }
+        //check down left
+        if(row < 7 && col > 0){
+            temp = in.board.get(row+1).charAt(col-1);
+            if(temp == '-'){
+                //add + to position to show checked
+                str = new StringBuilder(in.board.get(row+1));
+                str.replace(col-1,col, "+");
+                in.board.set(row+1, str.toString());
+                sum+=1;
+                sum = totalSpace(in, row+1, col-1, sum);
+            }
+        }
+        //check up left
+        if(row > 0 && col > 0){
+            temp = in.board.get(row-1).charAt(col-1);
+            if(temp == '-'){
+                //add + to position to show checked
+                str = new StringBuilder(in.board.get(row-1));
+                str.replace(col-1,col, "+");
+                in.board.set(row-1, str.toString());
+                sum+=1;
+                sum = totalSpace(in, row-1, col-1, sum);
+            }
+        }
+
+
+        return sum;
+    }
+
+
 
     public void printBoard(){
         System.out.print("\n  ");

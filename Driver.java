@@ -41,6 +41,9 @@ public class Driver {
             }
             b = temp;
             b.printBoard();
+            System.out.println("total spaces accessible to x: " + b.totalSpace(new BoardNode(b,0),b.xRowPos,b.xColPos,0));
+            System.out.println("total spaces accessible to o: " + b.totalSpace(new BoardNode(b,0),b.oRowPos,b.oColPos,0));
+
 
 
 
@@ -71,6 +74,7 @@ public class Driver {
             }
             b = temp;
             b.printBoard();
+            System.out.println("total spaces accessible to x: " + b.totalSpace(new BoardNode(b,0),b.xRowPos,b.xColPos,0));
 
             //ai move
 
