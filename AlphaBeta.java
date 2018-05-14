@@ -47,20 +47,27 @@ public class AlphaBeta {
 
     public static int [] getBestMove(BoardNode node){
         BoardNode temp = new BoardNode(node, 0);
+        BoardNode best = new BoardNode(node, 0);
         ArrayList<BoardNode> moves = temp.xCreateChildren();
         int [] result = new int[2];
         long time = System.nanoTime();
-        int i=1;
-        while(((System.nanoTime() - time)) < 10000000000.0) {
+        int initialDepth=3;
+        while(((System.nanoTime() - time)) < 18000000000.0) {
             temp.children = new ArrayList<>();
-            alphaBeta(temp, i, Integer.MIN_VALUE, Integer.MAX_VALUE, true, time);
-            System.out.println("max depth = " + i);
+            alphaBeta(temp, initialDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true, time);
 
-            i++;
+            //System.out.println("max depth = " + initialDepth);
+            if((((System.nanoTime() - time)) > 18000000000.0)){
+                break;
+            }
+            best = temp;
+
+            initialDepth++;
         }
-        Collections.sort(temp.children);
-        result[0] = temp.children.get(0).xRowPos;
-        result[1] = temp.children.get(0).xColPos;
+
+        Collections.sort(best.children);
+        result[0] = best.children.get(0).xRowPos;
+        result[1] = best.children.get(0).xColPos;
         System.out.println();
         //ArrayList<BoardNode> moves = node.createChildren();
         //for(int i=0; i<moves.size(); i++){
@@ -96,9 +103,9 @@ public class AlphaBeta {
                 if (beta <= alpha) {
                     break;
                 }
-                //if (System.nanoTime() - startTime > 18000000000.0){
-                //    break;
-                //}
+                if (System.nanoTime() - startTime > 19000000000.0){
+                    break;
+                }
             }
             return val;
         }
@@ -114,7 +121,7 @@ public class AlphaBeta {
                 if (beta <= alpha) {
                     break;
                 }
-                if (System.nanoTime() - startTime > 18000000000.0){
+                if (System.nanoTime() - startTime > 19000000000.0){
                     break;
                 }
             }
