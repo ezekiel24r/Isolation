@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 public class BoardNode implements Comparable<BoardNode>{
     public ArrayList<String> board;
@@ -10,7 +11,8 @@ public class BoardNode implements Comparable<BoardNode>{
     int alpha;
     int beta;
     int score;
-    int totalMoves;
+    int xMoves;
+    int oMoves;
 
     char player;
 
@@ -31,6 +33,11 @@ public class BoardNode implements Comparable<BoardNode>{
         xColPos = 0;
         oRowPos = 7;
         oColPos = 7;
+
+        xMoves = 20;
+        oMoves = 20;
+
+        score = 0;
 
         depth = 0;
 
@@ -86,7 +93,9 @@ public class BoardNode implements Comparable<BoardNode>{
 
         depth = 0;
 
-        //score = xPossibleMoves()- oPossibleMoves();
+        score = parent.score;
+        xMoves = parent.xMoves;
+        oMoves = parent.oMoves;
 
         children = new ArrayList<>();
 
@@ -110,7 +119,6 @@ public class BoardNode implements Comparable<BoardNode>{
 
             xRowPos = row;
             xColPos = col;
-            //score = xPossibleMoves() - oPossibleMoves();
             updateScore();
             player = 'O';
             return true;
@@ -133,7 +141,6 @@ public class BoardNode implements Comparable<BoardNode>{
 
             oRowPos = row;
             oColPos = col;
-            //score = xPossibleMoves() - oPossibleMoves();
             updateScore();
             player = 'X';
 
@@ -659,21 +666,38 @@ public class BoardNode implements Comparable<BoardNode>{
         h3 = 1.0;
         h4 = 0.0;
 
-        int xMoves = xPossibleMoves();
-        int oMoves = oPossibleMoves();
+        xMoves = xPossibleMoves();
+        oMoves = oPossibleMoves();
 
-        int xSpace = totalSpace(new BoardNode(this, 0),xRowPos, xColPos, 0);
-        int oSpace = totalSpace(new BoardNode(this, 0),oRowPos, oColPos, 0);
+        //int xSpace = xTotalSpace();
+        //int oSpace = oTotalSpace();
+
+        int xAdv;
+        int oAdv;
+
+        if(xRowPos > 1 && xColPos > 1 && xRowPos < 6 && xColPos < 6){
+            xAdv = 5;
+        }
+        else {
+            xAdv = 0;
+        }
+        if(oRowPos > 1 && oColPos > 1 && oRowPos < 6 && oColPos < 6){
+            oAdv = 5;
+        }
+        else{
+            oAdv = 0;
+        }
 
 
 
 
         if(player == 'X') {
 
-            score = xMoves-oMoves /*+ (int)(xDirections()-oDirections()*h3)*/ + (xSpace - oSpace) + depth;
+            score = (xMoves-oMoves) + (xAdv - oAdv);
         }
         else{
-            score = xMoves-oMoves /*+ (int)(xDirections()-oDirections()*h3)*/ + (xSpace - oSpace) - depth;
+
+            score = (xMoves-oMoves) + (xAdv - oAdv);
         }
 
     }
