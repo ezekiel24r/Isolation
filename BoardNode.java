@@ -688,6 +688,13 @@ public class BoardNode implements Comparable<BoardNode>{
             oAdv = 0;
         }
 
+        /*if(xSpace > oSpace){
+            xAdv += 1000;
+        }
+        if(oSpace > xSpace){
+            oAdv += 1000;
+        }*/
+
 
 
 

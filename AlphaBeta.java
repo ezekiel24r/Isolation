@@ -80,6 +80,7 @@ public class AlphaBeta {
         ArrayList<BoardNode> moves;
         int val;
 
+
         if (depth == 0)
             return node.score;
         if (node.xMoves == 0) {
