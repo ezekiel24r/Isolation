@@ -669,31 +669,34 @@ public class BoardNode implements Comparable<BoardNode>{
         xMoves = xPossibleMoves();
         oMoves = oPossibleMoves();
 
-        //int xSpace = xTotalSpace();
-        //int oSpace = oTotalSpace();
 
         int xAdv;
         int oAdv;
 
-        if(xRowPos > 1 && xColPos > 1 && xRowPos < 6 && xColPos < 6){
+        if(xRowPos > 2 && xColPos > 2 && xRowPos < 5 && xColPos < 5){
             xAdv = 5;
         }
         else {
             xAdv = 0;
         }
-        if(oRowPos > 1 && oColPos > 1 && oRowPos < 6 && oColPos < 6){
+        if(oRowPos > 2 && oColPos > 2 && oRowPos < 5 && oColPos < 5){
             oAdv = 5;
         }
         else{
             oAdv = 0;
         }
 
-        /*if(xSpace > oSpace){
+        /*
+        int xSpace = xTotalSpace();
+        int oSpace = oTotalSpace();
+
+        if(xSpace > (oSpace*2)){
             xAdv += 1000;
         }
-        if(oSpace > xSpace){
+        if(oSpace > (xSpace*2)){
             oAdv += 1000;
-        }*/
+        }
+        */
 
 
 
