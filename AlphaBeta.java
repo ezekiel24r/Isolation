@@ -48,7 +48,7 @@ public class AlphaBeta {
     public static int [] getBestMove(BoardNode node){
         BoardNode temp = new BoardNode(node, 0);
         BoardNode best = new BoardNode(node, 0);
-        ArrayList<BoardNode> moves = temp.xCreateChildren();
+        //ArrayList<BoardNode> moves = new ArrayList<>();
         int [] result = new int[2];
         long time = System.nanoTime();
         int initialDepth=4;
@@ -61,7 +61,7 @@ public class AlphaBeta {
 
                 break;
             }
-            best = temp;
+            best.children = temp.children;
 
             initialDepth++;
         }
@@ -69,12 +69,19 @@ public class AlphaBeta {
         Collections.sort(best.children);
         int j=0;
         int k=1;
-        if(best.children.size()>1) {
+        int rand;
+        if(best.children.size()>1 && node.depth<5){
             while (k<best.children.size() && (best.children.get(j).score == best.children.get(k).score)) {
-                if (ThreadLocalRandom.current().nextInt(0, 2) == 0) {
+                rand = ThreadLocalRandom.current().nextInt(0, 2);
+                System.out.println("Random number = " + rand);
+
+                if (rand == 0) {
+                    System.out.println("Next choice selected");
                     j++;
                     k++;
                 }
+                else
+                    break;
             }
         }
         result[0] = best.children.get(j).xRowPos;
@@ -88,27 +95,31 @@ public class AlphaBeta {
     }
 
     public static int alphaBeta(BoardNode node, int depth, int alpha, int beta, boolean maximizingPlayer, long startTime) {
-        ArrayList<BoardNode> moves;
+        //ArrayList<BoardNode> moves;
+
         int val;
 
 
         if (depth == 0)
             return node.score;
         if (node.xMoves == 0) {
+            node.score = Integer.MIN_VALUE+10;
             return Integer.MIN_VALUE+10;
 
         }
         if (node.oMoves == 0) {
+            node.score = Integer.MAX_VALUE;
             return Integer.MAX_VALUE-10;
         }
 
         if(maximizingPlayer){
             val = Integer.MIN_VALUE;
-            moves = node.createChildren();
-            Collections.sort(moves);
+            //moves = node.createChildren();
+            node.createChildren();
+            Collections.sort(node.children);
 
-            for(int i=0; i<moves.size(); i++){
-                val = Math.max(val, alphaBeta(moves.get(i), depth-1, alpha, beta, false, startTime));
+            for(int i=0; i<node.children.size(); i++){
+                val = Math.max(val, alphaBeta(node.children.get(i), depth-1, alpha, beta, false, startTime));
                 node.score = val;
                 alpha = Math.max(alpha, val);
                 if (beta <= alpha) {
@@ -118,17 +129,20 @@ public class AlphaBeta {
                     break;
                 }
             }
+            //node.children = moves;
             return val;
         }
         else{
             val = Integer.MAX_VALUE;
-            moves = node.createChildren();
-            moves.sort(Collections.reverseOrder());
+            //moves = node.createChildren();
+            node.createChildren();
+            Collections.sort(node.children);
+            Collections.reverse(node.children);
 
-            for(int i=0; i<moves.size(); i++){
-                val = Math.min(val, alphaBeta(moves.get(i), depth-1, alpha, beta, true, startTime));
+            for(int i=0; i<node.children.size(); i++){
+                val = Math.min(val, alphaBeta(node.children.get(i), depth-1, alpha, beta, true, startTime));
                 node.score = val;
-                alpha = Math.min(beta, val);
+                beta = Math.min(beta, val);
                 if (beta <= alpha) {
                     break;
                 }
@@ -136,6 +150,7 @@ public class AlphaBeta {
                     break;
                 }
             }
+            //node.children = moves;
             return val;
         }
     }

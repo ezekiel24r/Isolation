@@ -29,14 +29,14 @@ public class Driver {
 
             //move = parseInput(scan.nextLine());
             move = AlphaBeta.getBestMove(b);
-            temp = new BoardNode(b);
+            temp = new BoardNode(b,0);
             while(!temp.moveX(move[0], move[1])){
                 b.printBoard();
                 System.out.println("Illegal Move!");
                 System.out.println("X has " + b.xPossibleMoves() + " moves available");
                 System.out.println("Enter a valid move for X");
                 move = parseInput(scan.nextLine());
-                temp = new BoardNode(b);
+                temp = new BoardNode(b,0);
 
             }
             b = temp;
@@ -62,14 +62,14 @@ public class Driver {
             //move = AlphaBeta.run(b, 'Y', 0, 0, false);
 
 
-            temp = new BoardNode(b);
+            temp = new BoardNode(b,0);
             while(!temp.moveO(move[0], move[1])){
                 b.printBoard();
                 System.out.println("Illegal Move!");
                 System.out.println("O has " + b.oPossibleMoves() + " moves available");
                 System.out.println("Enter a valid move for O");
                 move = parseInput(scan.nextLine());
-                temp = new BoardNode(b);
+                temp = new BoardNode(b,0);
 
             }
             b = temp;
