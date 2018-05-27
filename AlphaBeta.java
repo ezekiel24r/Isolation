@@ -3,47 +3,10 @@ import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AlphaBeta {
-    public static int[] run(BoardNode node, char player, int alpha, int beta, boolean maxPlayer) {
-        int[] result = new int[2];
 
-        if (maxPlayer) {
-            ArrayList<BoardNode> moves;
+    static double TIME_LIMIT = 2000000000.0; //18 seconds
+    static double DEPTH_LIMIT = 100;
 
-
-            if (player == 'X') {
-                moves = node.xCreateChildren();
-                Collections.sort(moves);
-
-                System.out.println();
-                result[0] = moves.get(0).xRowPos;
-                result[1] = moves.get(0).xColPos;
-                return result;
-
-            } else if (player == 'Y') {
-                moves = node.oCreateChildren();
-
-            }
-        } else {
-            ArrayList<BoardNode> moves;
-
-
-            if (player == 'Y') {
-                moves = node.oCreateChildren();
-                Collections.sort(moves);
-
-                System.out.println();
-                result[0] = moves.get(moves.size() - 1).oRowPos;
-                result[1] = moves.get(moves.size() - 1).oColPos;
-                return result;
-
-            } else if (player == 'X') {
-                moves = node.oCreateChildren();
-
-            }
-
-        }
-        return result;
-    }
 
     public static int [] getBestMove(BoardNode node){
         BoardNode temp = new BoardNode(node, 0);
@@ -52,12 +15,12 @@ public class AlphaBeta {
         int [] result = new int[2];
         long time = System.nanoTime();
         int initialDepth=4;
-        while(((System.nanoTime() - time)) < 18000000000.0  && initialDepth < 100) {
+        while(((System.nanoTime() - time)) < TIME_LIMIT  && initialDepth < DEPTH_LIMIT) {
             temp.children = new ArrayList<>();
             alphaBeta(temp, initialDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true, time);
 
-            System.out.println("max depth = " + initialDepth);
-            if((((System.nanoTime() - time)) > 18000000000.0)){
+            //System.out.println("max depth = " + initialDepth);
+            if((((System.nanoTime() - time)) > TIME_LIMIT)){
 
                 break;
             }
@@ -73,10 +36,10 @@ public class AlphaBeta {
         if(best.children.size()>1 && node.depth<5){
             while (k<best.children.size() && (best.children.get(j).score == best.children.get(k).score)) {
                 rand = ThreadLocalRandom.current().nextInt(0, 2);
-                System.out.println("Random number = " + rand);
+                //System.out.println("Random number = " + rand);
 
                 if (rand == 0) {
-                    System.out.println("Next choice selected");
+                    //System.out.println("Next choice selected");
                     j++;
                     k++;
                 }
@@ -86,7 +49,6 @@ public class AlphaBeta {
         }
         result[0] = best.children.get(j).xRowPos;
         result[1] = best.children.get(j).xColPos;
-        System.out.println();
         //ArrayList<BoardNode> moves = node.createChildren();
         //for(int i=0; i<moves.size(); i++){
             //alphaBeta()
@@ -125,7 +87,7 @@ public class AlphaBeta {
                 if (beta <= alpha) {
                     break;
                 }
-                if (System.nanoTime() - startTime > 18000000000.0){
+                if (System.nanoTime() - startTime > TIME_LIMIT){
                     break;
                 }
             }
@@ -146,7 +108,7 @@ public class AlphaBeta {
                 if (beta <= alpha) {
                     break;
                 }
-                if (System.nanoTime() - startTime > 18000000000.0){
+                if (System.nanoTime() - startTime > TIME_LIMIT){
                     break;
                 }
             }

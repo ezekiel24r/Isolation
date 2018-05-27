@@ -1,107 +1,204 @@
+import javafx.collections.ModifiableObservableListBase;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Driver {
-    public static void main(String [] args){
+    public static void main(String[] args) {
         //test
 
+        ArrayList<int[]> moveList = new ArrayList<>();
+
         Scanner scan = new Scanner(System.in);
+        String choice;
 
-        BoardNode b = new BoardNode();
-        BoardNode temp;
-        System.out.println();
-        b.printBoard();
-        System.out.println();
+        while(true) {
+            System.out.println("Does this computer's AI play first? (Y/N)");
+            choice = scan.nextLine();
+            if (choice.equals("Y")) {
 
-        int row;
-        int col;
-        int move[];
-        while(true){
-            if(b.xPossibleMoves() == 0){
-                System.out.println("O has won!");
+
+                BoardNode b = new BoardNode();
+                BoardNode temp;
+                System.out.println();
+                b.printBoard(moveList, 'X');
+                System.out.println();
+
+                int row;
+                int col;
+                int move[];
+                while (true) {
+
+                    //X Moves
+
+                    //X cannot make a move
+                    if (b.xPossibleMoves() == 0) {
+                        System.out.println("O has won!");
+                        break;
+                    }
+
+                    //O cannot make a move, and X can, so there is no reason for X to choose
+                    if (b.oPossibleMoves() == 0) {
+                        System.out.println("X has won!");
+                        break;
+                    }
+
+                    System.out.println("X is choosing a move");
+
+                    //move = parseInput(scan.nextLine());
+                    move = AlphaBeta.getBestMove(b);
+                    temp = new BoardNode(b, 0);
+                    while (!temp.moveX(move[0], move[1])) {
+                        System.out.println("Illegal Move!");
+                        System.out.println("Enter a valid move for X");
+                        move = parseInput(scan.nextLine());
+                        temp = new BoardNode(b, 0);
+
+                    }
+                    b = temp;
+                    moveList.add(move);
+                    b.printBoard(moveList, 'X');
+                    System.out.println("Computer's move is: " + ((char)(move[0]+65)) + (move[1]+1));
+
+
+                    //O moves
+
+                    //O cannot make a move
+                    if (b.oPossibleMoves() == 0) {
+                        System.out.println("X has won!");
+                        break;
+                    }
+
+                    //X cannot make a move, and O can, so there is no reason for O to choose
+                    if (b.xPossibleMoves() == 0) {
+                        System.out.println("O has won!");
+                        break;
+                    }
+
+                    System.out.print("Enter opponent's move: ");
+                    move = parseInput(scan.nextLine());
+                    System.out.println();
+                    //move = AlphaBeta.run(b, 'Y', 0, 0, false);
+
+
+                    temp = new BoardNode(b, 0);
+                    while (!temp.moveO(move[0], move[1])) {
+                        System.out.println("Illegal Move!");
+                        System.out.println("Enter a valid move for O");
+                        move = parseInput(scan.nextLine());
+                        temp = new BoardNode(b, 0);
+
+                    }
+                    b = temp;
+                    moveList.add(move);
+                    b.printBoard(moveList, 'X');
+
+                }
                 break;
-            }
-            if(b.oPossibleMoves() == 0){
-                System.out.println("X has won!");
+
+
+            } else if (choice.equals("N")) {
+
+                BoardNode b = new BoardNode("O");
+                BoardNode temp;
+                System.out.println();
+                b.printBoard(moveList, 'O');
+                System.out.println();
+
+                int row;
+                int col;
+                int move[];
+                while (true) {
+
+                    //O Moves
+
+                    //O cannot move
+                    if (b.oPossibleMoves() == 0) {
+                        System.out.println("X has won!");
+                        break;
+                    }
+
+                    //O can move, and X cannot move,  so O has no reason to choose a move
+                    if (b.xPossibleMoves() == 0) {
+                        System.out.println("O has won!");
+                        break;
+                    }
+                    System.out.print("Enter opponent's move: ");
+                    move = parseInput(scan.nextLine());
+                    System.out.println();
+                    //move = AlphaBeta.run(b, 'Y', 0, 0, false);
+
+
+                    temp = new BoardNode(b, 0);
+                    while (!temp.moveO(move[0], move[1])) {
+                        System.out.println("Illegal Move!");
+                        System.out.println("Enter a valid move for O");
+                        move = parseInput(scan.nextLine());
+                        temp = new BoardNode(b, 0);
+
+                    }
+                    b = temp;
+                    b.printBoard(moveList, 'O');
+
+
+                    //X Moves
+
+                    //X cannot make a moves
+                    if (b.xPossibleMoves() == 0) {
+                        System.out.println("O has won!");
+                        break;
+                    }
+                    //O cannot make a move, so there is no reason for X to move
+                    if (b.oPossibleMoves() == 0) {
+                        System.out.println("X has won!");
+                        break;
+                    }
+                    System.out.println("X is choosing a move");
+
+                    //move = parseInput(scan.nextLine());
+                    move = AlphaBeta.getBestMove(b);
+                    temp = new BoardNode(b, 0);
+                    while (!temp.moveX(move[0], move[1])) {
+                        System.out.println("Illegal Move!");
+                        System.out.println("Enter a valid move for X");
+                        move = parseInput(scan.nextLine());
+                        temp = new BoardNode(b, 0);
+
+                    }
+                    b = temp;
+                    b.printBoard(moveList, 'O');
+
+                    //move for O
+
+                    //ai move
+                }
                 break;
-            }
-            System.out.println("X has " + b.xPossibleMoves() + " moves available");
-            System.out.println("Enter a move for X");
-
-            //move = parseInput(scan.nextLine());
-            move = AlphaBeta.getBestMove(b);
-            temp = new BoardNode(b,0);
-            while(!temp.moveX(move[0], move[1])){
-                b.printBoard();
-                System.out.println("Illegal Move!");
-                System.out.println("X has " + b.xPossibleMoves() + " moves available");
-                System.out.println("Enter a valid move for X");
-                move = parseInput(scan.nextLine());
-                temp = new BoardNode(b,0);
 
             }
-            b = temp;
-            b.printBoard();
-            System.out.println("total spaces accessible to x: " + b.totalSpace(new BoardNode(b,0),b.xRowPos,b.xColPos,0));
-            System.out.println("total spaces accessible to o: " + b.totalSpace(new BoardNode(b,0),b.oRowPos,b.oColPos,0));
-
-
-
-
-            //move for O
-            if(b.oPossibleMoves() == 0){
-                System.out.println("X has won!");
-                break;
+            else{
+                System.out.println("Invalid choice");
             }
-            if(b.xPossibleMoves() == 0){
-                System.out.println("O has won!");
-                break;
-            }
-            System.out.println("O has " + b.oPossibleMoves() + " moves available");
-            System.out.println("Enter a move for O");
-            move = parseInput(scan.nextLine());
-            //move = AlphaBeta.run(b, 'Y', 0, 0, false);
-
-
-            temp = new BoardNode(b,0);
-            while(!temp.moveO(move[0], move[1])){
-                b.printBoard();
-                System.out.println("Illegal Move!");
-                System.out.println("O has " + b.oPossibleMoves() + " moves available");
-                System.out.println("Enter a valid move for O");
-                move = parseInput(scan.nextLine());
-                temp = new BoardNode(b,0);
-
-            }
-            b = temp;
-            b.printBoard();
-            System.out.println("total spaces accessible to x: " + b.totalSpace(new BoardNode(b,0),b.xRowPos,b.xColPos,0));
-
-            //ai move
-
-
         }
 
     }
 
 
-    public static int [] parseInput(String in){
-        int [] result = new int[2];
-        if(in.length() != 2){
+    public static int[] parseInput(String in) {
+        int[] result = new int[2];
+        if (in.length() != 2) {
             result[0] = -1;
             result[1] = -1;
             return result;
         }
 
-        if(Character.isAlphabetic(in.charAt(0))) {
+        if (Character.isAlphabetic(in.charAt(0))) {
             result[0] = in.charAt(0) - 65;
-        }
-        else{
+        } else {
             result[0] = -1;
         }
-        if(Character.isDigit(in.charAt(1))){
+        if (Character.isDigit(in.charAt(1))) {
             result[1] = Character.getNumericValue(in.charAt(1)) - 1;
-        }
-        else{
+        } else {
             result[1] = -1;
         }
 

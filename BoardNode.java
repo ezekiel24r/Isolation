@@ -1,3 +1,4 @@
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
@@ -11,6 +12,8 @@ public class BoardNode implements Comparable<BoardNode>{
     int score;
     int xMoves;
     int oMoves;
+    int xSpace;
+    int oSpace;
 
     char player;
 
@@ -35,6 +38,9 @@ public class BoardNode implements Comparable<BoardNode>{
         xMoves = 20;
         oMoves = 20;
 
+        xSpace = 62;
+        oSpace = 62;
+
         score = 0;
 
         depth = 0;
@@ -42,9 +48,69 @@ public class BoardNode implements Comparable<BoardNode>{
         player = 'X';
 
         children = new ArrayList<>();
+    }
 
+    BoardNode(String choice){
+        if(choice.equals("O")) {
+            board = new ArrayList<String>(8);
+            board.add("O-------");
+            board.add("--------");
+            board.add("--------");
+            board.add("--------");
+            board.add("--------");
+            board.add("--------");
+            board.add("--------");
+            board.add("-------X");
 
+            xRowPos = 7;
+            xColPos = 7;
+            oRowPos = 0;
+            oColPos = 0;
 
+            xMoves = 20;
+            oMoves = 20;
+
+            xSpace = 62;
+            oSpace = 62;
+
+            score = 0;
+
+            depth = 0;
+
+            player = 'O';
+
+            children = new ArrayList<>();
+        }
+        else{
+            board = new ArrayList<String>(8);
+            board.add("X-------");
+            board.add("--------");
+            board.add("--------");
+            board.add("--------");
+            board.add("--------");
+            board.add("--------");
+            board.add("--------");
+            board.add("-------O");
+
+            xRowPos = 0;
+            xColPos = 0;
+            oRowPos = 7;
+            oColPos = 7;
+
+            xMoves = 20;
+            oMoves = 20;
+
+            xSpace = 62;
+            oSpace = 62;
+
+            score = 0;
+
+            depth = 0;
+
+            player = 'X';
+
+            children = new ArrayList<>();
+        }
     }
 
     BoardNode(int test){
@@ -125,6 +191,9 @@ public class BoardNode implements Comparable<BoardNode>{
         xMoves = parent.xMoves;
         oMoves = parent.oMoves;
 
+        xSpace = parent.xSpace;
+        oSpace = parent.oSpace;
+
         children = new ArrayList<>();
 
         player = parent.player;
@@ -204,10 +273,10 @@ public class BoardNode implements Comparable<BoardNode>{
 
         //killer move heuristic!
 
-        if(depth > 5) {
+        if(depth > 10) {
 
-            int xSpace = xTotalSpace();
-            int oSpace = oTotalSpace();
+            xSpace = xTotalSpace();
+            oSpace = oTotalSpace();
 
 
             if (xSpace > oSpace) {
@@ -909,20 +978,75 @@ public class BoardNode implements Comparable<BoardNode>{
 
 
 
-    public void printBoard(){
-        System.out.print("\n  ");
-        for(int i=0; i<8; i++){
-            System.out.print(i+1 + " ");
+    public void printBoard(ArrayList<int []> moveList, char firstPlayer){
+        int movePtr=0;
+        int size = moveList.size();
+        int temp[];
+        ArrayList<int []> tempList = new ArrayList<>();
+        for(int i=0; i<moveList.size(); i++){
+            tempList.add(moveList.get(i).clone());
         }
-        System.out.print( "Computer vs. Opponent\n");
-        for(int i=0; i<8; i++){
-            System.out.print((char)(i+65) + " ");
-            for(int j=0; j<8; j++){
-                System.out.print(board.get(i).charAt(j) + " ");
+        if(firstPlayer == 'X') {
+            System.out.print("\n  ");
+            for (int i = 0; i < 8; i++) {
+                System.out.print(i + 1 + " ");
+            }
+            System.out.print("\tComputer vs. Opponent\n");
+            for (int i = 0; i < 8; i++) {
+                System.out.print((char) (i + 65) + " ");
+                for (int j = 0; j < 8; j++) {
+                    System.out.print(board.get(i).charAt(j) + " ");
+                }
+                //read two moves off list
+                if(!tempList.isEmpty()) {
+                    temp = tempList.remove(0);
+                    temp[0]+=65;
+                    temp[1]+=1;
+                    movePtr++;
+                    System.out.print("\t" + movePtr + ".\t" + ((char)temp[0]) + temp[1]);
+                }
+                if(!tempList.isEmpty()) {
+                    temp = tempList.remove(0);
+                    temp[0] += 65;
+                    temp[1] += 1;
+                    System.out.print("\t" + (char) temp[0] + temp[1]);
+                }
+
+                System.out.println();
+            }
+            while(!tempList.isEmpty()){
+                movePtr++;
+                System.out.print("\t\t\t\t\t" + movePtr + ".\t");
+                temp = tempList.remove(0);
+                temp[0] += 65;
+                temp[1] += 1;
+                System.out.print("" + (char) temp[0] + (temp[1]));
+                if(!tempList.isEmpty()) {
+                    temp = tempList.remove(0);
+                    temp[0] += 65;
+                    temp[1] += 1;
+                    System.out.print("\t" + ((char)temp[0]) + temp[1]);
+                }
+                System.out.println();
             }
             System.out.println();
         }
-        System.out.println();
+        else{
+            System.out.print("\n  ");
+            for (int i = 0; i < 8; i++) {
+                System.out.print(i + 1 + " ");
+            }
+            System.out.print("\tOpponent vs. Computer\n");
+            for (int i = 0; i < 8; i++) {
+                System.out.print((char) (i + 65) + " ");
+                for (int j = 0; j < 8; j++) {
+                    System.out.print(board.get(i).charAt(j) + " ");
+                }
+
+                System.out.println();
+            }
+            System.out.println();
+        }
     }
 
     @Override
