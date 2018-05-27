@@ -8,19 +8,21 @@ public class AlphaBeta {
     static double DEPTH_LIMIT = 100;
 
 
-    public static int [] getBestMove(BoardNode node){
+    public static int [] getBestMove(BoardNode node, long timeAllowed){
+        timeAllowed*=1000000000;
+
         BoardNode temp = new BoardNode(node, 0);
         BoardNode best = new BoardNode(node, 0);
         //ArrayList<BoardNode> moves = new ArrayList<>();
         int [] result = new int[2];
-        long time = System.nanoTime();
+        long initTime = System.nanoTime();
         int initialDepth=4;
-        while(((System.nanoTime() - time)) < TIME_LIMIT  && initialDepth < DEPTH_LIMIT) {
+        while(((System.nanoTime() - initTime)) < timeAllowed  && initialDepth < DEPTH_LIMIT) {
             temp.children = new ArrayList<>();
-            alphaBeta(temp, initialDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true, time);
+            alphaBeta(temp, initialDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true, initTime, timeAllowed);
 
             //System.out.println("max depth = " + initialDepth);
-            if((((System.nanoTime() - time)) > TIME_LIMIT)){
+            if((((System.nanoTime() - initTime)) > timeAllowed)){
 
                 break;
             }
@@ -56,7 +58,7 @@ public class AlphaBeta {
         return result;
     }
 
-    public static int alphaBeta(BoardNode node, int depth, int alpha, int beta, boolean maximizingPlayer, long startTime) {
+    public static int alphaBeta(BoardNode node, int depth, int alpha, int beta, boolean maximizingPlayer, long startTime, long timeAllowed) {
         //ArrayList<BoardNode> moves;
 
         int val;
@@ -81,13 +83,13 @@ public class AlphaBeta {
             Collections.sort(node.children);
 
             for(int i=0; i<node.children.size(); i++){
-                val = Math.max(val, alphaBeta(node.children.get(i), depth-1, alpha, beta, false, startTime));
+                val = Math.max(val, alphaBeta(node.children.get(i), depth-1, alpha, beta, false, startTime, timeAllowed));
                 node.score = val;
                 alpha = Math.max(alpha, val);
                 if (beta <= alpha) {
                     break;
                 }
-                if (System.nanoTime() - startTime > TIME_LIMIT){
+                if (System.nanoTime() - startTime > timeAllowed){
                     break;
                 }
             }
@@ -102,13 +104,13 @@ public class AlphaBeta {
             Collections.reverse(node.children);
 
             for(int i=0; i<node.children.size(); i++){
-                val = Math.min(val, alphaBeta(node.children.get(i), depth-1, alpha, beta, true, startTime));
+                val = Math.min(val, alphaBeta(node.children.get(i), depth-1, alpha, beta, true, startTime, timeAllowed));
                 node.score = val;
                 beta = Math.min(beta, val);
                 if (beta <= alpha) {
                     break;
                 }
-                if (System.nanoTime() - startTime > TIME_LIMIT){
+                if (System.nanoTime() - startTime > timeAllowed){
                     break;
                 }
             }

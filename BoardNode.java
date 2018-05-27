@@ -253,10 +253,10 @@ public class BoardNode implements Comparable<BoardNode>{
         oMoves = oPossibleMoves();
 
 
-        int xAdv;
-        int oAdv;
+        int xAdv = 0;
+        int oAdv = 0;
 
-        if(xRowPos > 2 && xColPos > 2 && xRowPos < 5 && xColPos < 5){
+        /*if(xRowPos > 2 && xColPos > 2 && xRowPos < 5 && xColPos < 5){
             xAdv = 1;
         }
         else {
@@ -267,7 +267,7 @@ public class BoardNode implements Comparable<BoardNode>{
         }
         else{
             oAdv = 0;
-        }
+        }*/
 
         //killer move heuristic!
 
@@ -1040,7 +1040,36 @@ public class BoardNode implements Comparable<BoardNode>{
                 for (int j = 0; j < 8; j++) {
                     System.out.print(board.get(i).charAt(j) + " ");
                 }
+                //read two moves off list
+                if(!tempList.isEmpty()) {
+                    temp = tempList.remove(0);
+                    temp[0]+=65;
+                    temp[1]+=1;
+                    movePtr++;
+                    System.out.print("\t" + movePtr + ".\t" + ((char)temp[0]) + temp[1]);
+                }
+                if(!tempList.isEmpty()) {
+                    temp = tempList.remove(0);
+                    temp[0] += 65;
+                    temp[1] += 1;
+                    System.out.print("\t" + (char) temp[0] + temp[1]);
+                }
 
+                System.out.println();
+            }
+            while(!tempList.isEmpty()){
+                movePtr++;
+                System.out.print("                \t" + movePtr + ".\t");
+                temp = tempList.remove(0);
+                temp[0] += 65;
+                temp[1] += 1;
+                System.out.print("" + (char) temp[0] + (temp[1]));
+                if(!tempList.isEmpty()) {
+                    temp = tempList.remove(0);
+                    temp[0] += 65;
+                    temp[1] += 1;
+                    System.out.print("\t" + ((char)temp[0]) + temp[1]);
+                }
                 System.out.println();
             }
             System.out.println();

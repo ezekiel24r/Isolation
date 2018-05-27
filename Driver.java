@@ -10,7 +10,16 @@ public class Driver {
 
         Scanner scan = new Scanner(System.in);
         String choice;
+        long timeAllowed;
 
+
+        System.out.println("How much time (in seconds) is allowed for the AI?");
+        choice = scan.nextLine();
+        while(!isValidTime(choice)){
+                System.out.println("Invalid time");
+                choice = scan.nextLine();
+        }
+        timeAllowed = Long.parseLong(choice);
         while(true) {
             System.out.println("Does this computer's AI play first? (Y/N)");
             choice = scan.nextLine();
@@ -45,7 +54,7 @@ public class Driver {
                     System.out.println("X is choosing a move");
 
                     //move = parseInput(scan.nextLine());
-                    move = AlphaBeta.getBestMove(b);
+                    move = AlphaBeta.getBestMove(b, timeAllowed);
                     temp = new BoardNode(b, 0);
                     while (!temp.moveX(move[0], move[1])) {
                         System.out.println("Illegal Move!");
@@ -137,6 +146,7 @@ public class Driver {
 
                     }
                     b = temp;
+                    moveList.add(move);
                     b.printBoard(moveList, 'O');
 
 
@@ -155,7 +165,7 @@ public class Driver {
                     System.out.println("X is choosing a move");
 
                     //move = parseInput(scan.nextLine());
-                    move = AlphaBeta.getBestMove(b);
+                    move = AlphaBeta.getBestMove(b, timeAllowed);
                     temp = new BoardNode(b, 0);
                     while (!temp.moveX(move[0], move[1])) {
                         System.out.println("Illegal Move!");
@@ -165,7 +175,10 @@ public class Driver {
 
                     }
                     b = temp;
+                    moveList.add(move);
                     b.printBoard(moveList, 'O');
+                    System.out.println("Computer's move is: " + ((char)(move[0]+65)) + (move[1]+1));
+
 
                     //move for O
 
@@ -202,5 +215,9 @@ public class Driver {
         }
 
         return result;
+    }
+
+    public static boolean isValidTime(String str){
+        return str.matches("[1-9][0-9]*");
     }
 }
