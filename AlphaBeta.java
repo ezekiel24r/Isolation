@@ -21,7 +21,7 @@ public class AlphaBeta {
             temp.children = new ArrayList<>();
             alphaBeta(temp, initialDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true, initTime, timeAllowed);
 
-            //System.out.println("max depth = " + initialDepth);
+            System.out.println("max depth = " + initialDepth);
             if((((System.nanoTime() - initTime)) > timeAllowed)){
 
                 break;

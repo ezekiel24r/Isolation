@@ -271,7 +271,7 @@ public class BoardNode implements Comparable<BoardNode>{
 
         //killer move heuristic!
 
-        if(depth > 10) {
+        /*if(depth > 10) {
 
             xSpace = xTotalSpace();
             oSpace = oTotalSpace();
@@ -283,7 +283,7 @@ public class BoardNode implements Comparable<BoardNode>{
             if (oSpace > xSpace) {
                 oAdv += 1000;
             }
-        }
+        }*/
 
 
 
