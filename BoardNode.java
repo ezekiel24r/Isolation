@@ -1014,7 +1014,7 @@ public class BoardNode implements Comparable<BoardNode>{
             }
             while(!tempList.isEmpty()){
                 movePtr++;
-                System.out.print("\t\t\t\t\t" + movePtr + ".\t");
+                System.out.print("                \t" + movePtr + ".\t");
                 temp = tempList.remove(0);
                 temp[0] += 65;
                 temp[1] += 1;
