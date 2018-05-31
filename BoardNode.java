@@ -177,7 +177,8 @@ public class BoardNode implements Comparable<BoardNode>{
         return false;
     }
 
-    /*This is the simple heuristic used to determine if a state of the board is a good state or not.
+
+    /*updateScore: This is the simple heuristic used to determine if a state of the board is a good state or not.
         I decided to use (xMoves - (oMoves)*2) as my scoring heuristic, because I found that while this
         heuristic can still lose to the (xMoves - oMoves) heuristic, it appeared to win more decisively
         when it was in an advantageous position by playing more aggressively than the opponent.
@@ -186,6 +187,10 @@ public class BoardNode implements Comparable<BoardNode>{
         xMoves = xPossibleMoves();
         oMoves = oPossibleMoves();
 
+        /*explanation of the next line:
+            The AI favors moves that limit the Opponents moves more than maximizing it's own moves. In other words,
+            it places more focus on trapping the opponent and less focus on trying to avoid becoming trapped.
+         */
         score = (xMoves-(oMoves*2));
     }
 
