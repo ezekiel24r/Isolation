@@ -269,34 +269,25 @@ public class BoardNode implements Comparable<BoardNode>{
             oAdv = 0;
         }*/
 
-        //killer move heuristic!
+        //killer move heuristic! (loses against the ai without it...)
 
-        /*if(depth > 10) {
+        /*if(depth > 16) {
 
             xSpace = xTotalSpace();
             oSpace = oTotalSpace();
 
 
-            if (xSpace > oSpace) {
+            if (xSpace > (oSpace*2))  {
                 xAdv += 1000;
+
             }
-            if (oSpace > xSpace) {
+            if (oSpace > (xSpace*2)) {
                 oAdv += 1000;
             }
         }*/
 
 
-
-
-        if(player == 'X') {
-
-            score = (xMoves-oMoves) + (xAdv - oAdv);
-        }
-        else{
-
-            score = (xMoves-oMoves) + (xAdv - oAdv);
-        }
-
+        score = (xMoves-(oMoves*2));
     }
 
 

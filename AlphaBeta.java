@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AlphaBeta {
 
     static double TIME_LIMIT = 2000000000.0; //18 seconds
-    static double DEPTH_LIMIT = 100;
+    static double DEPTH_LIMIT = 64;
 
 
     public static int [] getBestMove(BoardNode node, long timeAllowed){
@@ -86,6 +86,7 @@ public class AlphaBeta {
                 val = Math.max(val, alphaBeta(node.children.get(i), depth-1, alpha, beta, false, startTime, timeAllowed));
                 node.score = val;
                 alpha = Math.max(alpha, val);
+                //don't look past a killer move
                 if (beta <= alpha) {
                     break;
                 }
