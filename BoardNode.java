@@ -1,3 +1,12 @@
+/*
+Author: Eric Rensel
+CS420 - Artificial Intelligence
+
+Class BoardNode creates and manipulates the game board for Isolation, and also provides the scoring heuristic
+for the current state of the board. It also enforces the rules of play so no illegal moves are made.
+ */
+
+
 import java.util.ArrayList;
 
 public class BoardNode implements Comparable<BoardNode>{
@@ -10,13 +19,11 @@ public class BoardNode implements Comparable<BoardNode>{
     int score;
     int xMoves;
     int oMoves;
-    int xSpace;
-    int oSpace;
-
     char player;
 
     public ArrayList<BoardNode> children;
 
+    //Default Constructor is that X is the first player
     BoardNode(){
         board = new ArrayList<String>(8);
         board.add("X-------");
@@ -36,11 +43,7 @@ public class BoardNode implements Comparable<BoardNode>{
         xMoves = 20;
         oMoves = 20;
 
-        xSpace = 62;
-        oSpace = 62;
-
         score = 0;
-
         depth = 0;
 
         player = 'X';
@@ -48,6 +51,7 @@ public class BoardNode implements Comparable<BoardNode>{
         children = new ArrayList<>();
     }
 
+    //Constructor if the first player was chosen
     BoardNode(String choice){
         if(choice.equals("O")) {
             board = new ArrayList<String>(8);
@@ -68,11 +72,7 @@ public class BoardNode implements Comparable<BoardNode>{
             xMoves = 20;
             oMoves = 20;
 
-            xSpace = 62;
-            oSpace = 62;
-
             score = 0;
-
             depth = 0;
 
             player = 'O';
@@ -98,11 +98,7 @@ public class BoardNode implements Comparable<BoardNode>{
             xMoves = 20;
             oMoves = 20;
 
-            xSpace = 62;
-            oSpace = 62;
-
             score = 0;
-
             depth = 0;
 
             player = 'X';
@@ -111,95 +107,31 @@ public class BoardNode implements Comparable<BoardNode>{
         }
     }
 
-    BoardNode(int test){
+    //this constructor is used to create a copy of a board state so that the old state is not manipulated.
+    BoardNode(BoardNode in){
         board = new ArrayList<String>(8);
-        board.add("#-------");
-        board.add("--------");
-        board.add("--------");
-        board.add("---##O--");
-        board.add("---###--");
-        board.add("--------");
-        board.add("-X---#--");
-        board.add("-------#");
+        for(int i = 0; i<8; i++){
+            this.board.add(in.board.get(i));
+        }
 
-        xRowPos = 6;
-        xColPos = 1;
-        oRowPos = 3;
-        oColPos = 5;
+        xRowPos = in.xRowPos;
+        xColPos = in.xColPos;
+        oRowPos = in.oRowPos;
+        oColPos = in.oColPos;
 
-        updateScore();
+        depth = in.depth;
 
-        depth = 8;
-
-        player = 'X';
+        score = in.score;
+        xMoves = in.xMoves;
+        oMoves = in.oMoves;
 
         children = new ArrayList<>();
 
-
+        player = in.player;
 
     }
 
-
-
-    /*BoardNode(BoardNode parent){
-        board = new ArrayList<String>(8);
-        for(int i = 0; i<8; i++){
-            this.board.add(parent.board.get(i));
-        }
-
-
-
-        xRowPos = parent.xRowPos;
-        xColPos = parent.xColPos;
-        oRowPos = parent.oRowPos;
-        oColPos = parent.oColPos;
-
-        depth = parent.depth;
-
-        //score = xPossibleMoves()- oPossibleMoves();
-
-        children = new ArrayList<>();
-
-        parent.children.add(this);
-
-        if(parent.player == 'X'){
-            this.player = 'O';
-        }
-        else{
-            this.player = 'X';
-        }
-    }*/
-
-    BoardNode(BoardNode parent, int signal){
-        board = new ArrayList<String>(8);
-        for(int i = 0; i<8; i++){
-            this.board.add(parent.board.get(i));
-        }
-
-
-
-        xRowPos = parent.xRowPos;
-        xColPos = parent.xColPos;
-        oRowPos = parent.oRowPos;
-        oColPos = parent.oColPos;
-
-        depth = parent.depth;
-
-        score = parent.score;
-        xMoves = parent.xMoves;
-        oMoves = parent.oMoves;
-
-        xSpace = parent.xSpace;
-        oSpace = parent.oSpace;
-
-        children = new ArrayList<>();
-
-        player = parent.player;
-
-    }
-
-
-
+    //moveX changes the position of X and places the # barrier.
     public boolean moveX(int row, int col){
         if (xLegalMove(row, col)) {
             //make old position #
@@ -219,10 +151,10 @@ public class BoardNode implements Comparable<BoardNode>{
             depth++;
             return true;
         }
-        //System.out.println("Illegal move!");
         return false;
     }
 
+    //moveO changes the position of O and places the # barrier.
     public boolean moveO(int row, int col){
         if (oLegalMove(row, col)) {
             //make old position #
@@ -230,7 +162,7 @@ public class BoardNode implements Comparable<BoardNode>{
             str.replace(oColPos,oColPos+1, "#");
             board.set(oRowPos, str.toString());
 
-            //add X to new position
+            //add O to new position
             str = new StringBuilder(board.get(row));
             str.replace(col,col+1, "O");
             board.set(row, str.toString());
@@ -242,56 +174,22 @@ public class BoardNode implements Comparable<BoardNode>{
             depth++;
             return true;
         }
-        //System.out.println("Illegal move!");
         return false;
     }
 
+    /*This is the simple heuristic used to determine if a state of the board is a good state or not.
+        I decided to use (xMoves - (oMoves)*2) as my scoring heuristic, because I found that while this
+        heuristic can still lose to the (xMoves - oMoves) heuristic, it appeared to win more decisively
+        when it was in an advantageous position by playing more aggressively than the opponent.
+     */
     public void updateScore(){
-
-
         xMoves = xPossibleMoves();
         oMoves = oPossibleMoves();
-
-
-        int xAdv = 0;
-        int oAdv = 0;
-
-        /*if(xRowPos > 2 && xColPos > 2 && xRowPos < 5 && xColPos < 5){
-            xAdv = 1;
-        }
-        else {
-            xAdv = 0;
-        }
-        if(oRowPos > 2 && oColPos > 2 && oRowPos < 5 && oColPos < 5){
-            oAdv = 1;
-        }
-        else{
-            oAdv = 0;
-        }*/
-
-        //killer move heuristic! (loses against the ai without it...)
-
-        /*if(depth > 16) {
-
-            xSpace = xTotalSpace();
-            oSpace = oTotalSpace();
-
-
-            if (xSpace > (oSpace*2))  {
-                xAdv += 1000;
-
-            }
-            if (oSpace > (xSpace*2)) {
-                oAdv += 1000;
-            }
-        }*/
-
 
         score = (xMoves-(oMoves*2));
     }
 
-
-
+    //xLegalMove returns whether an X move is legal or not
     public boolean xLegalMove(int row, int col) {
         if(row < 0 || row > 7 || col < 0 || col > 7){
             return false;
@@ -445,10 +343,11 @@ public class BoardNode implements Comparable<BoardNode>{
                 return true;
             }
         }
-
+        //move is impossible
         return false;
     }
 
+    //oLegalMove returns whether an O move is legal or not
     public boolean oLegalMove(int row, int col){
         if(row < 0 || row > 7 || col < 0 || col > 7){
             return false;
@@ -602,19 +501,11 @@ public class BoardNode implements Comparable<BoardNode>{
                 return true;
             }
         }
-
+        //move is impossible
         return false;
     }
 
-    public int possibleMoves(){
-        if(player == 'X'){
-            return xPossibleMoves();
-        }
-        else{
-            return oPossibleMoves();
-        }
-    }
-
+    //xPossibleMoves returns the sum of total legal moves that X has in it's current position
     public int xPossibleMoves(){
         int sum = 0;
         for(int i=0; i<8; i++){
@@ -627,6 +518,7 @@ public class BoardNode implements Comparable<BoardNode>{
         return sum;
     }
 
+    //oPossibleMoves returns the sum ot total legal moves that O has in it's current position
     public int oPossibleMoves(){
         int sum = 0;
         for(int i=0; i<8; i++){
@@ -639,6 +531,7 @@ public class BoardNode implements Comparable<BoardNode>{
         return sum;
     }
 
+    //xListPossibleMoves creates a list of the coordinates of all legal moves that X can make
     public ArrayList<String> xListPossibleMoves(){
         ArrayList<String> moves= new ArrayList<>();
         StringBuilder str;
@@ -655,6 +548,7 @@ public class BoardNode implements Comparable<BoardNode>{
         return moves;
     }
 
+    //oListPossibleMoves creates a list of the coordinates of all legal moves that O can make
     public ArrayList<String> oListPossibleMoves(){
         ArrayList<String> moves= new ArrayList<>();
         StringBuilder str;
@@ -671,148 +565,18 @@ public class BoardNode implements Comparable<BoardNode>{
         return moves;
     }
 
-    public int xDirections(){
-        int sum = 0;
-        int degree = 2;
-        char temp;
-        //check left
-        if(xColPos > 0){
-            temp = board.get(xRowPos).charAt(xColPos-1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check right
-        if(xColPos < 7){
-            temp = board.get(xRowPos).charAt(xColPos+1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check up
-        if(xRowPos > 0){
-            temp = board.get(xRowPos-1).charAt(xColPos);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check down
-        if(xRowPos < 7){
-            temp = board.get(xRowPos+1).charAt(xColPos);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check up right
-        if(xRowPos > 0 && xColPos < 7){
-            temp = board.get(xRowPos-1).charAt(xColPos+1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check down right
-        if(xRowPos < 7 && xColPos < 7){
-            temp = board.get(xRowPos+1).charAt(xColPos+1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check down left
-        if(xRowPos < 7 && xColPos > 0){
-            temp = board.get(xRowPos+1).charAt(xColPos-1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check up left
-        if(xRowPos > 0 && xColPos > 0){
-            temp = board.get(xRowPos-1).charAt(xColPos-1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        return sum;
-    }
-
-    public int oDirections(){
-        int sum = 0;
-        int degree = 2;
-        char temp;
-        //check left
-        if(oColPos > 0){
-            temp = board.get(oRowPos).charAt(oColPos-1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check right
-        if(oColPos < 7){
-            temp = board.get(oRowPos).charAt(oColPos+1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check up
-        if(oRowPos > 0){
-            temp = board.get(oRowPos-1).charAt(oColPos);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check down
-        if(oRowPos < 7){
-            temp = board.get(oRowPos+1).charAt(oColPos);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check up right
-        if(oRowPos > 0 && oColPos < 7){
-            temp = board.get(oRowPos-1).charAt(oColPos+1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check down right
-        if(oRowPos < 7 && oColPos < 7){
-            temp = board.get(oRowPos+1).charAt(oColPos+1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check down left
-        if(oRowPos < 7 && oColPos > 0){
-            temp = board.get(oRowPos+1).charAt(oColPos-1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        //check up left
-        if(oRowPos > 0 && oColPos > 0){
-            temp = board.get(oRowPos-1).charAt(oColPos-1);
-            if(temp == '-'){
-                sum+=degree;
-            }
-        }
-        return sum;
-    }
-
-
-
-
-
-
-
-    public ArrayList<BoardNode> createChildren(){
+    //createChildren calls the appropriate function based on who's turn it is
+    public void createChildren(){
         if(player == 'X'){
-            return xCreateChildren();
+            xCreateChildren();
         }
         else{
-            return oCreateChildren();
+            oCreateChildren();
         }
     }
 
-    public ArrayList<BoardNode> xCreateChildren(){
+    //xCreateChildren generates the child boards that are created by playing every possible legal move by X
+    public void xCreateChildren(){
         ArrayList<String> moves = this.xListPossibleMoves();
         ArrayList<BoardNode> results = new ArrayList<>();
         BoardNode temp;
@@ -821,17 +585,17 @@ public class BoardNode implements Comparable<BoardNode>{
             row = Character.getNumericValue(moves.get(i).charAt(0));
             col = Character.getNumericValue(moves.get(i).charAt(1));
 
-            temp = new BoardNode(this, 0);
+            temp = new BoardNode(this);
             temp.moveX(row, col);
             //this.children.add(temp);
             results.add(temp);
         }
 
         children = results;
-        return results;
     }
 
-    public ArrayList<BoardNode> oCreateChildren(){
+    //oCreateChildren generates the child boards that are created by playing every possible legal move by O
+    public void oCreateChildren(){
         ArrayList<String> moves = this.oListPossibleMoves();
         ArrayList<BoardNode> results = new ArrayList<>();
         BoardNode temp;
@@ -840,133 +604,16 @@ public class BoardNode implements Comparable<BoardNode>{
             row = Character.getNumericValue(moves.get(i).charAt(0));
             col = Character.getNumericValue(moves.get(i).charAt(1));
 
-            temp = new BoardNode(this, 0);
+            temp = new BoardNode(this);
             temp.moveO(row, col);
             //this.children.add(temp);
             results.add(temp);
         }
 
         children = results;
-        return results;
     }
 
-    //objective: return the total number of traversable spaces in the area
-
-    public int xTotalSpace(){
-        return totalSpace(new BoardNode(this, 0), xRowPos, xColPos, 0);
-    }
-
-    public int oTotalSpace(){
-        return totalSpace(new BoardNode(this, 0), oRowPos, oColPos, 0);
-    }
-
-    public int totalSpace(BoardNode in, int row, int col, int sum){
-        //BoardNode temp = new BoardNode(this, 0);
-        char temp;
-        StringBuilder str;
-        //check left
-        if(col > 0){
-            temp = in.board.get(row).charAt(col-1);
-            if(temp == '-'){
-                //add + to position to show checked
-                str = new StringBuilder(in.board.get(row));
-                str.replace(col-1,col, "+");
-                in.board.set(row, str.toString());
-                sum+=1;
-                sum = totalSpace(in, row, col-1, sum);
-            }
-        }
-        //check right
-        if(col < 7){
-            temp = in.board.get(row).charAt(col+1);
-            if(temp == '-'){
-                //add + to position to show checked
-                str = new StringBuilder(in.board.get(row));
-                str.replace(col+1,col+2, "+");
-                in.board.set(row, str.toString());
-                sum+=1;
-                sum = totalSpace(in, row, col+1, sum);
-            }
-        }
-        //check up
-        if(row > 0){
-            temp = in.board.get(row-1).charAt(col);
-            if(temp == '-'){
-                //add + to position to show checked
-                str = new StringBuilder(in.board.get(row-1));
-                str.replace(col,col+1, "+");
-                in.board.set(row-1, str.toString());
-                sum+=1;
-                sum = totalSpace(in, row-1, col, sum);
-            }
-        }
-        //check down
-        if(row < 7){
-            temp = in.board.get(row+1).charAt(col);
-            if(temp == '-'){
-                //add + to position to show checked
-                str = new StringBuilder(in.board.get(row+1));
-                str.replace(col,col+1, "+");
-                in.board.set(row+1, str.toString());
-                sum+=1;
-                sum = totalSpace(in, row+1, col, sum);
-            }
-        }
-        //check up right
-        if(row > 0 && col < 7){
-            temp = in.board.get(row-1).charAt(col+1);
-            if(temp == '-'){
-                //add + to position to show checked
-                str = new StringBuilder(in.board.get(row-1));
-                str.replace(col+1,col+2, "+");
-                in.board.set(row-1, str.toString());
-                sum+=1;
-                sum = totalSpace(in, row-1, col+1, sum);
-            }
-        }
-        //check down right
-        if(row < 7 && col < 7){
-            temp = in.board.get(row+1).charAt(col+1);
-            if(temp == '-'){
-                //add + to position to show checked
-                str = new StringBuilder(in.board.get(row+1));
-                str.replace(col+1,col+2, "+");
-                in.board.set(row+1, str.toString());
-                sum+=1;
-                sum = totalSpace(in, row+1, col+1, sum);
-            }
-        }
-        //check down left
-        if(row < 7 && col > 0){
-            temp = in.board.get(row+1).charAt(col-1);
-            if(temp == '-'){
-                //add + to position to show checked
-                str = new StringBuilder(in.board.get(row+1));
-                str.replace(col-1,col, "+");
-                in.board.set(row+1, str.toString());
-                sum+=1;
-                sum = totalSpace(in, row+1, col-1, sum);
-            }
-        }
-        //check up left
-        if(row > 0 && col > 0){
-            temp = in.board.get(row-1).charAt(col-1);
-            if(temp == '-'){
-                //add + to position to show checked
-                str = new StringBuilder(in.board.get(row-1));
-                str.replace(col-1,col, "+");
-                in.board.set(row-1, str.toString());
-                sum+=1;
-                sum = totalSpace(in, row-1, col-1, sum);
-            }
-        }
-
-
-        return sum;
-    }
-
-
-
+    //printBoard outputs the board and every move that the players took
     public void printBoard(ArrayList<int []> moveList, char firstPlayer){
         int movePtr=0;
         int size = moveList.size();
@@ -1067,6 +714,7 @@ public class BoardNode implements Comparable<BoardNode>{
         }
     }
 
+    //compareTo is necessary to implement so that the generated child boards can be sorted by score
     @Override
     public int compareTo(BoardNode right) {
         if(this.score < right.score){

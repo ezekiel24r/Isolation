@@ -1,30 +1,38 @@
+/*
+Author: Eric Rensel
+CS420 - Artificial Intelligence
+
+Class Driver runs the UI that allows a user to input moves from a human player or another AI.
+The program ends when the game is finished.
+ */
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Driver {
     public static void main(String[] args) {
-        //test
 
+        //moveList stores every move that was made by both players
         ArrayList<int[]> moveList = new ArrayList<>();
 
         Scanner scan = new Scanner(System.in);
         String choice;
         long timeAllowed;
 
-
         System.out.println("How much time (in seconds) is allowed for the AI?");
         choice = scan.nextLine();
+
+        //check if time input is valid
         while(!isValidTime(choice)){
                 System.out.println("Invalid time");
                 choice = scan.nextLine();
         }
         timeAllowed = Long.parseLong(choice);
+
         while(true) {
             System.out.println("Does this computer's AI play first? (Y/N)");
             choice = scan.nextLine();
             if (choice.equals("Y")) {
-
 
                 BoardNode b = new BoardNode();
                 BoardNode temp;
@@ -39,7 +47,7 @@ public class Driver {
 
                     //X Moves
 
-                    //X cannot make a move
+                    //X cannot make a move, so O wins
                     if (b.xPossibleMoves() == 0) {
                         System.out.println("O has won!");
                         break;
@@ -53,14 +61,13 @@ public class Driver {
 
                     System.out.println("X is choosing a move");
 
-                    //move = parseInput(scan.nextLine());
                     move = AlphaBeta.getBestMove(b, timeAllowed);
-                    temp = new BoardNode(b, 0);
+                    temp = new BoardNode(b);
                     while (!temp.moveX(move[0], move[1])) {
                         System.out.println("Illegal Move!");
                         System.out.println("Enter a valid move for X");
                         move = parseInput(scan.nextLine());
-                        temp = new BoardNode(b, 0);
+                        temp = new BoardNode(b);
 
                     }
                     b = temp;
@@ -86,21 +93,19 @@ public class Driver {
                     System.out.print("Enter opponent's move: ");
                     move = parseInput(scan.nextLine());
                     System.out.println();
-                    //move = AlphaBeta.run(b, 'Y', 0, 0, false);
 
-
-                    temp = new BoardNode(b, 0);
+                    temp = new BoardNode(b);
                     while (!temp.moveO(move[0], move[1])) {
                         System.out.println("Illegal Move!");
                         System.out.println("Enter a valid move for O");
                         move = parseInput(scan.nextLine());
-                        temp = new BoardNode(b, 0);
+                        temp = new BoardNode(b);
 
                     }
                     b = temp;
                     moveList.add(move);
                     b.printBoard(moveList, 'X');
-
+                    //loop back to X move
                 }
                 break;
 
@@ -120,7 +125,7 @@ public class Driver {
 
                     //O Moves
 
-                    //O cannot move
+                    //O cannot move, and loses
                     if (b.oPossibleMoves() == 0) {
                         System.out.println("X has won!");
                         break;
@@ -134,15 +139,13 @@ public class Driver {
                     System.out.print("Enter opponent's move: ");
                     move = parseInput(scan.nextLine());
                     System.out.println();
-                    //move = AlphaBeta.run(b, 'Y', 0, 0, false);
 
-
-                    temp = new BoardNode(b, 0);
+                    temp = new BoardNode(b);
                     while (!temp.moveO(move[0], move[1])) {
                         System.out.println("Illegal Move!");
                         System.out.println("Enter a valid move for O");
                         move = parseInput(scan.nextLine());
-                        temp = new BoardNode(b, 0);
+                        temp = new BoardNode(b);
 
                     }
                     b = temp;
@@ -164,25 +167,20 @@ public class Driver {
                     }
                     System.out.println("X is choosing a move");
 
-                    //move = parseInput(scan.nextLine());
                     move = AlphaBeta.getBestMove(b, timeAllowed);
-                    temp = new BoardNode(b, 0);
+                    temp = new BoardNode(b);
                     while (!temp.moveX(move[0], move[1])) {
                         System.out.println("Illegal Move!");
                         System.out.println("Enter a valid move for X");
                         move = parseInput(scan.nextLine());
-                        temp = new BoardNode(b, 0);
+                        temp = new BoardNode(b);
 
                     }
                     b = temp;
                     moveList.add(move);
                     b.printBoard(moveList, 'O');
                     System.out.println("Computer's move is: " + ((char)(move[0]+65)) + (move[1]+1));
-
-
-                    //move for O
-
-                    //ai move
+                    //loop back to O move
                 }
                 break;
 
@@ -194,7 +192,7 @@ public class Driver {
 
     }
 
-
+    //parseInput takes in the input string typed in the console and changes it to the moves coordinates
     public static int[] parseInput(String in) {
         int[] result = new int[2];
         if (in.length() != 2) {
@@ -217,7 +215,9 @@ public class Driver {
         return result;
     }
 
+    //isValidTime is a simple regular expression to determine if the time input should be accepted
     public static boolean isValidTime(String str){
-        return str.matches("[1-9][0-9]*");
+        //only times between 0 and 100 exclusive are accepted
+        return str.matches("[1-9]([0-9])?");
     }
 }
